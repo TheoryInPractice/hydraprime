@@ -5,6 +5,9 @@
 #include "util/Random.hpp"
 #include "util/logger.hpp"
 
+std::string const PROGRAM_NAME = "exact-solver";
+std::string const PROGRAM_VERSION = "0.0.2";
+
 using namespace std;
 
 /**
@@ -22,15 +25,23 @@ int main(int argc, char* argv[]) {
   int seed = 12345;
   bool tww_mode = false;
   int lb_greedy_num_iterations = 20;
+  bool print_version = false;
 
   // parse arguments
   CLI::App app{"Exact solver for PACE 2023"};
+  app.add_flag("--version", print_version, "Print program's version number and exit");
   app.add_option("path", path, "Input file path");
   app.add_option("--seed", seed, "Random seed");
   app.add_flag("--tww", tww_mode, "Print twin-width instead of contraction sequence");
   app.add_option("--lb-greedy", lb_greedy_num_iterations, "LBGreedy number of iterations");
 
   CLI11_PARSE(app, argc, argv);
+
+  // show version
+  if (print_version) {
+    printf("%s %s\n", PROGRAM_NAME.c_str(), PROGRAM_VERSION.c_str());
+    return 0;
+  }
 
   // load graph
   ds::graph::Graph graph;
