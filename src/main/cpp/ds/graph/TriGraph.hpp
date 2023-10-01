@@ -75,6 +75,9 @@ class TriGraph {
     }
 
     // set up hash table
+    if (orig_n_ >= static_cast<int>(util::HASH_TABLE_SIZE) / 2) {
+      throw std::invalid_argument("Graph too large for hash table.");
+    }
     util::initialize_hash_table();
 
     // log_trace("Created TriGraph: n=%d, m=%d, dense=%s", n_, m_, (dense_ ? "True" : "False"));
@@ -190,6 +193,8 @@ class TriGraph {
     if (is_red) make_edge_red(i, j);
   }
 
+  inline uint64_t vertex_hash_mask(int i) const { return util::get_hash((1 << 20) + i); }
+
   inline uint64_t red_edge_hash_mask(int i, int j) const {
     return util::get_hash((std::min(i, j) % 1024) * 1024 + (std::max(i, j) % 1024));
   }
@@ -246,12 +251,14 @@ class TriGraph {
     removed_.set(i);
     red_cap_reached_.reset(i);
     nodes_.reset(i);
+    hash_ ^= vertex_hash_mask(i);
     --n_;
   }
 
   void add_vertex(int i) {
     removed_.reset(i);
     nodes_.set(i);
+    hash_ ^= vertex_hash_mask(i);
     ++n_;
   }
 
@@ -276,6 +283,7 @@ class TriGraph {
     // remove vertex i
     for (int w : adj_[i].to_vector()) remove_edge(i, w);
     removed_.set(i);
+    hash_ ^= vertex_hash_mask(i);
     --n_;
 
     // find a vertex with max red degree

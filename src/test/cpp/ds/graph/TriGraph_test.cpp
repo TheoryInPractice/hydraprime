@@ -401,6 +401,38 @@ TEST(TriGraphTest, Hash2) {
   EXPECT_EQ(h.hash(), g.hash());
 }
 
+TEST(TriGraphTest, Hash3) {
+  auto gg = generators::path_graph(10);
+  gg.compute_all_pairs_symmetric_differences();
+
+  ds::graph::TriGraph<ds::ArrayBitset6> g(gg);
+  ds::graph::TriGraph<ds::ArrayBitset6> h(gg);
+
+  g.make_edge_red(0, 1);
+  g.make_edge_red(3, 4);
+
+  h.make_edge_red(4, 3);
+  h.make_edge_red(1, 0);
+
+  EXPECT_EQ(g.hash(), h.hash());
+  h.remove_vertex(9);  // vertex deletion should give a different hash
+  EXPECT_NE(g.hash(), h.hash());
+
+  g.remove_vertex(9);
+  EXPECT_EQ(g.hash(), h.hash());
+
+  h.add_vertex(9);
+  h.add_edge(8, 9, false);
+  EXPECT_NE(g.hash(), h.hash());
+
+  g.add_vertex(9);
+  g.add_edge(8, 9, true);
+  EXPECT_NE(g.hash(), h.hash());
+
+  g.make_edge_black(8, 9);
+  EXPECT_EQ(g.hash(), h.hash());
+}
+
 template <typename T>
 void test_is_free_contraction(T G) {
   G.compute_greedy_criteria(3);
