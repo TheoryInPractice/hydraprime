@@ -9,6 +9,11 @@ GENHTML=genhtml
 TAR=gtar
 EXACT_SOLVER_BIN=exact-solver
 
+ifneq ("$(wildcard /opt/homebrew/bin/g++-13)","")
+export CC=/opt/homebrew/bin/gcc-13
+export CXX=/opt/homebrew/bin/g++-13
+GCOV=/opt/homebrew/bin/gcov-13
+else
 ifneq ("$(wildcard /opt/homebrew/bin/g++-12)","")
 export CC=/opt/homebrew/bin/gcc-12
 export CXX=/opt/homebrew/bin/g++-12
@@ -18,6 +23,7 @@ ifneq ("$(wildcard /opt/homebrew/bin/g++-11)","")
 export CC=/opt/homebrew/bin/gcc-11
 export CXX=/opt/homebrew/bin/g++-11
 GCOV=/opt/homebrew/bin/gcov-11
+endif
 endif
 endif
 
@@ -37,12 +43,19 @@ COV_PY=$(COV_PY_DIR)/lcov.info
 COV_HTML=coverage/html
 COV_MERGED=coverage/lcov.info
 
+PROFILE_ON ?= false
+TRACE_ON ?= false
+LOGGING_ON ?= true
 
 build:
 	cd $(SRC_CPP) && $(CMAKE) -S . -B "$(BUILD_DIR)/Release" $(CMAKE_OPTS) -DCMAKE_BUILD_TYPE=Release
 	cd $(SRC_CPP) && $(CMAKE) --build "$(BUILD_DIR)/Release"
 	$(CP) -f build/Release/$(EXACT_SOLVER_BIN) dist/
 	@echo "Created: dist/$(EXACT_SOLVER_BIN)"
+
+build-debug:
+	cd $(SRC_CPP) && $(CMAKE) -S . -B "$(BUILD_DIR)/Debug" $(CMAKE_OPTS) -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=OFF -DPROFILE_ON=$(PROFILE_ON) -DTRACE_ON=$(TRACE_ON) -DLOGGING_ON=$(LOGGING_ON)
+	cd $(SRC_CPP) && $(CMAKE) --build "$(BUILD_DIR)/Debug"
 
 clean:
 	@echo "Cleaning..."
@@ -54,5 +67,11 @@ publish:
 	cd $(SRC_CPP) && $(TAR) -zcvf $(DIST_DIR)/$(EXACT_SOLVER_BIN).tgz --exclude-from=$(PROJ_DIR)/.tarignore *
 	@echo "Created: dist/$(EXACT_SOLVER_BIN).tgz"
 
-.PHONY: build clean publish
+test:
+	@echo "GTEST_FILTER: $(GTEST_FILTER)"
+	cd $(SRC_CPP) && $(CMAKE) -DBUILD_TESTS=ON -S . -B "$(BUILD_DIR)/Debug" -DLOGGING_ON=$(LOGGING_ON) $(CMAKE_OPTS)
+	cd $(SRC_CPP) && $(CMAKE) --build "$(BUILD_DIR)/Debug"
+	"$(TEST_EXEC)" --output-on-failure $(GTEST_OPTS)
+
+.PHONY: build clean publish build-debug test
 

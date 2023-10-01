@@ -43,8 +43,25 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -DNDEBUG -DUNSAT -DNPROOFS -DQUIET")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DNDEBUG -Wall -funroll-loops -fno-stack-limit -O3")
 
 # build options
-add_compile_definitions(PROFILE_ON=false)
-add_compile_definitions(TRACE_ON=false)
-add_compile_definitions(LOGGING_ON=false)
+if (NOT DEFINED PROFILE_ON)
+  set(PROFILE_ON false)
+endif ()
 
-add_executable(exact-solver ${EXACT_SOLVER_SRC} ${KISSAT_SRC} ${MAIN_SRC})
+if (NOT DEFINED TRACE_ON)
+  set(TRACE_ON false)
+endif ()
+
+if (NOT DEFINED LOGGING_ON)
+  set(LOGGING_ON false)
+endif ()
+
+add_compile_definitions(PROFILE_ON=${PROFILE_ON})
+add_compile_definitions(TRACE_ON=${TRACE_ON})
+add_compile_definitions(LOGGING_ON=${LOGGING_ON})
+
+# tests with GoogleTest
+if (BUILD_TESTS)
+  add_subdirectory(../../test/cpp ../test)
+else ()
+  add_executable(exact-solver ${EXACT_SOLVER_SRC} ${KISSAT_SRC} ${MAIN_SRC})
+endif ()
