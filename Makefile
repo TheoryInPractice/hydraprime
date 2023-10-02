@@ -50,6 +50,7 @@ LOGGING_ON ?= true
 build:
 	cd $(SRC_CPP) && $(CMAKE) -S . -B "$(BUILD_DIR)/Release" $(CMAKE_OPTS) -DCMAKE_BUILD_TYPE=Release
 	cd $(SRC_CPP) && $(CMAKE) --build "$(BUILD_DIR)/Release"
+	$(RM) -f "dist/$(EXACT_SOLVER_BIN)"
 	$(CP) -f build/Release/$(EXACT_SOLVER_BIN) dist/
 	@echo "Created: dist/$(EXACT_SOLVER_BIN)"
 
