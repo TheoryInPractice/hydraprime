@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+"""
+Examples:
+  ./scripts/batch_verifier.py path/to/data/file1.gr path/to/data/file2.gr
+  ./scripts/batch_verifier.py --no-color path/to/data 2> logs/result.txt
+  ./scripts/batch_verifier.py --solver=dist/buggy-solver --no-color path/to/data 2> logs/result-bug.txt
+"""
 
 import sys
 import os
@@ -9,8 +15,8 @@ import multiprocessing
 __version__ = '0.0.1'
 __license__ = 'Apache License, Version 2.0'
 
-# Path settings.
 
+# Path settings.
 SCRIPT_PATH = os.path.realpath(__file__)
 SCRIPT_DIR = os.path.dirname(SCRIPT_PATH)
 PROJECT_DIR = os.path.dirname(SCRIPT_DIR)
