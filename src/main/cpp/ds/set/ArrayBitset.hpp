@@ -3,6 +3,7 @@
 #pragma GCC optimize("Ofast,inline,unroll-loops")  // Ofast = O3,fast-math,allow-store-data-races,no-protect-parens
 
 #include <algorithm>
+#include <cstdint>
 #include <cstring>
 #include <iomanip>
 #include <sstream>

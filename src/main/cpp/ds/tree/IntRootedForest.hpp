@@ -158,7 +158,8 @@ class IntRootedForest {
       auto x = stack.back();
       ret.push_back(x);
       if (x.second) {
-        for (auto it = get_children((x.first)).rbegin(); it; it = it.next()) {
+        auto children = get_children(x.first);
+        for (auto it = children.rbegin(); it != children.rend(); ++it) {
           stack.push_back({*it, false});
           stack.push_back({*it, true});
         }
