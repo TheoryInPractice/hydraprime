@@ -6,7 +6,7 @@
 #include "util/logger.hpp"
 
 std::string const PROGRAM_NAME = "exact-solver";
-std::string const PROGRAM_VERSION = "0.0.2";
+std::string const PROGRAM_VERSION = "0.0.3-SNAPSHOT";
 
 using namespace std;
 
