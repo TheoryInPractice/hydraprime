@@ -15,6 +15,7 @@ This repository stores the source code of our solver *Hydra Prime* for the Exact
 - [CMake](https://cmake.org/) Version 3.14 or later
 - [CLI11](https://github.com/CLIUtils/CLI11)
 - [The Kissat SAT Solver 3.0.0](https://github.com/arminbiere/kissat)
+- [modular-decomposition](https://github.com/mogproject/modular-decomposition)
 
 ### Build usage
 
